@@ -96,8 +96,33 @@ install_and_start_node() {
 restart_node() {
     screen -S network3 -X quit 
     sleep 1
-    start="while true; do cd ubuntu-node; $HOME/ubuntu-node/manager.sh up; echo '进程异常退出，等待重启60s' >&2; sleep 60; done"
-    screen -dmS network3 bash -c "$start"
+
+    # 检查目录是否存在
+    if [ ! -d "ubuntu-node" ]; then
+        echo "目录 ubuntu-node 不存在，请检查下载和解压是否成功。"
+        exit 1
+    fi
+
+    # 提示并进入目录
+    echo "进入 ubuntu-node 目录..."
+    cd ubuntu-node
+
+    # 检查并创建 screen 会话
+    if screen -list | grep -q "network3"; then
+        echo "检测到已有名为 'network3' 的 screen 会话。"
+    else
+        echo "创建新的 screen 会话 'network3'..."
+        screen -S network3 -dm
+    fi
+
+    # 启动节点
+    echo "启动节点..."
+    screen -S network3 -p 0 -X stuff 'sudo bash manager.sh up\n'
+
+    echo "脚本执行完毕。"
+    echo "按任意键返回主菜单..."
+    read -n 1
+    main_menu
 
 }
 
