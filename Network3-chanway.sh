@@ -96,7 +96,7 @@ install_and_start_node() {
 restart_node() {
     screen -S network3 -X quit 
     sleep 1
-    start="while true; do $HOME/ubuntu-node/manager.sh up; echo '进程异常退出，等待重启60s' >&2; sleep 60; done"
+    start="while true; do cd ubuntu-node; $HOME/ubuntu-node/manager.sh up; echo '进程异常退出，等待重启60s' >&2; sleep 60; done"
     screen -dmS network3 bash -c "$start"
 
 }
